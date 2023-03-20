@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"Foundries/domain"
+	"Foundries/users/utils"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -31,7 +32,7 @@ func NewUserHandler(r *gin.Engine, us domain.UserUsecase) {
 
 // Fetch will fetch the user data
 func (u *UserHandler) Fetch(c *gin.Context) {
-	users, err := u.UserUsecase.Fetch(c)
+	users, err := u.UserUsecase.Fetch()
 	if err != nil {
 		c.JSON(500, ResponseError{Message: err.Error()})
 		return
@@ -46,7 +47,7 @@ func (u *UserHandler) Fetch(c *gin.Context) {
 // GetByID will get user by given id
 func (u *UserHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
-	user, err := u.UserUsecase.GetByID(c, id)
+	user, err := u.UserUsecase.GetByID(id)
 	if err != nil {
 		c.JSON(500, ResponseError{Message: err.Error()})
 		return
@@ -61,7 +62,7 @@ func (u *UserHandler) GetByID(c *gin.Context) {
 // GetByEmail will get user by given email
 func (u *UserHandler) GetByEmail(c *gin.Context) {
 	email := c.Param("email")
-	user, err := u.UserUsecase.GetByEmail(c, email)
+	user, err := u.UserUsecase.GetByEmail(email)
 	if err != nil {
 		c.JSON(500, ResponseError{Message: err.Error()})
 		return
@@ -89,8 +90,14 @@ func (u *UserHandler) Store(c *gin.Context) {
 		return
 	}
 
+	// check email format
+	if utils.CheckFormat(user.Email) == false {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: "Email format is not correct"})
+		return
+	}
+
 	// Check if email is already registered
-	_, err = u.UserUsecase.GetByEmail(c, user.Email)
+	_, err = u.UserUsecase.GetByEmail(user.Email)
 	if err == nil {
 		c.JSON(http.StatusBadRequest, ResponseError{Message: "Email is already registered"})
 		return
@@ -112,7 +119,7 @@ func (u *UserHandler) Store(c *gin.Context) {
 	}
 
 	// Create user
-	err = u.UserUsecase.Store(c, &user)
+	err = u.UserUsecase.Store(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ResponseError{Message: err.Error()})
 		return
@@ -122,5 +129,47 @@ func (u *UserHandler) Store(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User created successfully",
 		"user":    user,
+	})
+}
+
+// Login will login user and return user data if success
+func (u *UserHandler) Login(c *gin.Context) {
+	var user domain.User
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(500, ResponseError{Message: err.Error()})
+		return
+	}
+
+	// check if email or password is empty
+	if user.Email == "" || user.Password == "" {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: "Email or Password is empty"})
+		return
+	}
+
+	// check user input email format with regex
+	if utils.CheckFormat(user.Email) == false {
+		c.JSON(http.StatusBadRequest, ResponseError{Message: "Email format is not correct"})
+		return
+	}
+	// check if email is registered
+	us, err := u.UserUsecase.GetByEmail(user.Email)
+	if err != nil {
+		c.JSON(http.StatusNotFound, ResponseError{Message: "Email is not registered"})
+		return
+	}
+
+	// check if password is correct
+	if bcrypt.CompareHashAndPassword([]byte(us.Password), []byte(user.Password)) != nil {
+		c.JSON(http.StatusUnauthorized, ResponseError{Message: "Password is incorrect"})
+		return
+	}
+
+	//TODO: generate token with JWT
+
+	// Return user and message to client
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User logged in successfully",
+		"user":    us,
 	})
 }

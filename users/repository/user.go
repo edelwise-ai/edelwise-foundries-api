@@ -2,7 +2,6 @@ package repository
 
 import (
 	"Foundries/domain"
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +15,7 @@ func NewUserRepository(Conn *gorm.DB) domain.UserRepository {
 }
 
 // Fetch will fetch all user data from database
-func (u *UserRepository) Fetch(c *gin.Context) ([]domain.User, error) {
+func (u *UserRepository) Fetch() ([]domain.User, error) {
 	var users []domain.User
 	err := u.Conn.Find(&users).Error
 	if err != nil {
@@ -26,7 +25,7 @@ func (u *UserRepository) Fetch(c *gin.Context) ([]domain.User, error) {
 }
 
 // GetByID will get user data by given id
-func (u *UserRepository) GetByID(c *gin.Context, id string) (domain.User, error) {
+func (u *UserRepository) GetByID(id string) (domain.User, error) {
 	var user domain.User
 	err := u.Conn.Where("id = ?", id).First(&user).Error
 	if err != nil {
@@ -36,7 +35,7 @@ func (u *UserRepository) GetByID(c *gin.Context, id string) (domain.User, error)
 }
 
 // GetByEmail will get user data by given email
-func (u *UserRepository) GetByEmail(c *gin.Context, email string) (domain.User, error) {
+func (u *UserRepository) GetByEmail(email string) (domain.User, error) {
 	var user domain.User
 	err := u.Conn.Where("email = ?", email).First(&user).Error
 	if err != nil {
@@ -46,7 +45,7 @@ func (u *UserRepository) GetByEmail(c *gin.Context, email string) (domain.User, 
 }
 
 // Store will store user data to database
-func (u *UserRepository) Store(c *gin.Context, user *domain.User) error {
+func (u *UserRepository) Store(user *domain.User) error {
 	err := u.Conn.Create(user).Error
 	if err != nil {
 		return err

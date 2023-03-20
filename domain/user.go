@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"github.com/gin-gonic/gin"
 	"time"
 )
 
@@ -16,15 +15,15 @@ type User struct {
 }
 
 type UserUsecase interface {
-	Fetch(c *gin.Context) ([]User, error)
-	GetByID(c *gin.Context, id string) (User, error)
-	GetByEmail(c *gin.Context, email string) (User, error)
-	Store(c *gin.Context, user *User) error
+	Fetch() ([]User, error)
+	GetByID(id string) (User, error)
+	GetByEmail(email string) (User, error)
+	Store(user *User) error
 }
 
 type UserRepository interface {
-	Fetch(c *gin.Context) ([]User, error)
-	GetByID(c *gin.Context, id string) (User, error)
-	GetByEmail(c *gin.Context, email string) (User, error)
-	Store(c *gin.Context, user *User) error
+	Fetch() ([]User, error)
+	GetByID(id string) (User, error)
+	GetByEmail(email string) (User, error)
+	Store(user *User) error
 }

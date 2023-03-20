@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"Foundries/domain"
-	"github.com/gin-gonic/gin"
 )
 
 type UserUsecase struct {
@@ -15,8 +14,8 @@ func NewUserUsecase(userRepo domain.UserRepository) domain.UserUsecase {
 }
 
 // Fetch will fetch all user data from database
-func (u *UserUsecase) Fetch(c *gin.Context) ([]domain.User, error) {
-	users, err := u.userRepo.Fetch(c)
+func (u *UserUsecase) Fetch() ([]domain.User, error) {
+	users, err := u.userRepo.Fetch()
 	if err != nil {
 		return nil, err
 	}
@@ -24,8 +23,8 @@ func (u *UserUsecase) Fetch(c *gin.Context) ([]domain.User, error) {
 }
 
 // GetByID will get user data by given id
-func (u *UserUsecase) GetByID(c *gin.Context, id string) (domain.User, error) {
-	user, err := u.userRepo.GetByID(c, id)
+func (u *UserUsecase) GetByID(id string) (domain.User, error) {
+	user, err := u.userRepo.GetByID(id)
 	if err != nil {
 		return user, err
 	}
@@ -33,8 +32,8 @@ func (u *UserUsecase) GetByID(c *gin.Context, id string) (domain.User, error) {
 }
 
 // GetByEmail will get user data by given email
-func (u *UserUsecase) GetByEmail(c *gin.Context, email string) (domain.User, error) {
-	user, err := u.userRepo.GetByEmail(c, email)
+func (u *UserUsecase) GetByEmail(email string) (domain.User, error) {
+	user, err := u.userRepo.GetByEmail(email)
 	if err != nil {
 		return user, err
 	}
@@ -42,8 +41,8 @@ func (u *UserUsecase) GetByEmail(c *gin.Context, email string) (domain.User, err
 }
 
 // Store will store user data to database
-func (u *UserUsecase) Store(c *gin.Context, user *domain.User) error {
-	err := u.userRepo.Store(c, user)
+func (u *UserUsecase) Store(user *domain.User) error {
+	err := u.userRepo.Store(user)
 	if err != nil {
 		return err
 	}

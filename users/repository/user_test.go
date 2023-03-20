@@ -2,12 +2,12 @@ package repository
 
 import (
 	"Foundries/domain"
-	"context"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"regexp"
 	"testing"
 )
 
@@ -17,8 +17,7 @@ type TestSuite struct {
 	userRepo domain.UserRepository
 }
 
-func TestFetch(t *testing.T) {
-	s := &TestSuite{}
+func (s *TestSuite) SetupSuite(t *testing.T) {
 	var (
 		db  *sql.DB
 		err error
@@ -45,6 +44,12 @@ func TestFetch(t *testing.T) {
 	})
 
 	s.db, err = gorm.Open(dialector, &gorm.Config{})
+}
+
+func TestFetch(t *testing.T) {
+	s := &TestSuite{}
+
+	s.SetupSuite(t)
 
 	mockUser := []domain.User{
 		{
@@ -54,16 +59,14 @@ func TestFetch(t *testing.T) {
 		},
 	}
 
-	defer db.Close()
-
 	rows := sqlmock.NewRows([]string{"id", "email", "password"}).
 		AddRow(mockUser[0].ID, mockUser[0].Email, mockUser[0].Password)
 
-	query := `SELECT * FROM "users"`
+	query := "SELECT * FROM \"users\""
 
-	s.mock.ExpectQuery(query).WillReturnRows(rows)
+	s.mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows)
 	a := NewUserRepository(s.db)
-	_, err = a.Fetch(context.Background())
+	_, err := a.Fetch()
 	if err != nil {
 		t.Errorf("Error should be nil, got %v", err)
 	}
@@ -72,6 +75,36 @@ func TestFetch(t *testing.T) {
 	assert.Len(t, mockUser, 1)
 }
 
-func TestGetByID(t *testing.T) {
-	
-}
+//func TestGetByID(t *testing.T) {
+//	s := &TestSuite{}
+//
+//	s.SetupSuite(t)
+//
+//	mockUser := []domain.User{
+//		{
+//			ID:       "IT_LbTlq16",
+//			Email:    "nevindra@nodeflux.io",
+//			Password: "$2a$10$P8Gv710T0BgzQkIFPIFYiuR1z7knjGdEe/9QzrtqNwDwGByC3L0Uq",
+//		},
+//	}
+//
+//	rows := sqlmock.NewRows([]string{"id", "email", "password"}).
+//		AddRow(mockUser[0].ID, mockUser[0].Email, mockUser[0].Password)
+//
+//	query := "SELECT * FROM \"users\" WHERE \"id\" = ? ORDER BY \"users\".\"id\" LIMIT 1"
+//
+//	s.mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows)
+//	a := NewUserRepository(s.db)
+//	_, err := a.GetByID("IT_LbTlq16")
+//	if err != nil {
+//		t.Errorf("Error should be nil, got %v", err)
+//	}
+//
+//	assert.NotEmpty(t, mockUser)
+//	assert.Len(t, mockUser, 1)
+//
+//	// check if the mock was called as expected
+//	if err := s.mock.ExpectationsWereMet(); err != nil {
+//		t.Errorf("there were unfulfilled expectations: %s", err)
+//	}
+//}
