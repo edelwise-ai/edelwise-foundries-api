@@ -1,7 +1,8 @@
-package controllers
+package http
 
 import (
-	"Foundries/domain"
+	"Foundries/users/models"
+	"Foundries/users/usecase"
 	"Foundries/users/utils"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -16,11 +17,11 @@ type ResponseError struct {
 
 // UserHandler will represent the http handler for user
 type UserHandler struct {
-	UserUsecase domain.UserUsecase
+	UserUsecase usecase.UserUsecase
 }
 
 // NewUserHandler will initialize the users/ resources endpoint
-func NewUserHandler(r *gin.Engine, us domain.UserUsecase) {
+func NewUserHandler(r *gin.Engine, us usecase.UserUsecase) {
 	handler := &UserHandler{
 		UserUsecase: us,
 	}
@@ -77,7 +78,7 @@ func (u *UserHandler) GetByEmail(c *gin.Context) {
 // Store will store the user by given request body
 func (u *UserHandler) Store(c *gin.Context) {
 	// Get user from request body
-	var user domain.User
+	var user models.User
 	err := c.BindJSON(&user)
 	if err != nil {
 		c.JSON(500, ResponseError{Message: err.Error()})
@@ -134,7 +135,7 @@ func (u *UserHandler) Store(c *gin.Context) {
 
 // Login will login user and return user data if success
 func (u *UserHandler) Login(c *gin.Context) {
-	var user domain.User
+	var user models.User
 	err := c.BindJSON(&user)
 	if err != nil {
 		c.JSON(500, ResponseError{Message: err.Error()})

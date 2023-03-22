@@ -1,7 +1,8 @@
-package repository
+package pg
 
 import (
-	"Foundries/domain"
+	"Foundries/users/models"
+	"Foundries/users/repository"
 	"gorm.io/gorm"
 )
 
@@ -10,13 +11,13 @@ type UserRepository struct {
 }
 
 // NewUserRepository will create an object that represent the interface
-func NewUserRepository(Conn *gorm.DB) domain.UserRepository {
+func NewUserRepository(Conn *gorm.DB) repository.UserRepository {
 	return &UserRepository{Conn}
 }
 
 // Fetch will fetch all user data from database
-func (u *UserRepository) Fetch() ([]domain.User, error) {
-	var users []domain.User
+func (u *UserRepository) Fetch() ([]models.User, error) {
+	var users []models.User
 	err := u.Conn.Find(&users).Error
 	if err != nil {
 		return nil, err
@@ -25,8 +26,8 @@ func (u *UserRepository) Fetch() ([]domain.User, error) {
 }
 
 // GetByID will get user data by given id
-func (u *UserRepository) GetByID(id string) (domain.User, error) {
-	var user domain.User
+func (u *UserRepository) GetByID(id string) (models.User, error) {
+	var user models.User
 	err := u.Conn.Where("id = ?", id).First(&user).Error
 	if err != nil {
 		return user, err
@@ -35,8 +36,8 @@ func (u *UserRepository) GetByID(id string) (domain.User, error) {
 }
 
 // GetByEmail will get user data by given email
-func (u *UserRepository) GetByEmail(email string) (domain.User, error) {
-	var user domain.User
+func (u *UserRepository) GetByEmail(email string) (models.User, error) {
+	var user models.User
 	err := u.Conn.Where("email = ?", email).First(&user).Error
 	if err != nil {
 		return user, err
@@ -45,7 +46,7 @@ func (u *UserRepository) GetByEmail(email string) (domain.User, error) {
 }
 
 // Store will store user data to database
-func (u *UserRepository) Store(user *domain.User) error {
+func (u *UserRepository) Store(user *models.User) error {
 	err := u.Conn.Create(user).Error
 	if err != nil {
 		return err

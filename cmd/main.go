@@ -1,10 +1,10 @@
 package main
 
 import (
-	"Foundries/domain"
-	_userHTTPDelivery "Foundries/users/controllers"
-	_userRepo "Foundries/users/repository"
-	_userUsecase "Foundries/users/usecase"
+	_userHTTPDelivery "Foundries/users/controllers/http"
+	"Foundries/users/models"
+	_userRepo "Foundries/users/repository/pg"
+	_userUsecase "Foundries/users/usecase/http"
 	"github.com/gin-gonic/gin"
 	"log"
 
@@ -24,7 +24,7 @@ func main() {
 	log.Println("Database connected")
 	log.Println("Running migrations...")
 	// Migrate the schema
-	err = db.AutoMigrate(&domain.User{})
+	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		panic(err)
 	}
