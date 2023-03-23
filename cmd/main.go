@@ -1,10 +1,10 @@
 package main
 
 import (
-	_userHTTPDelivery "Foundries/users/controllers/http"
-	"Foundries/users/models"
-	_userRepo "Foundries/users/repository/pg"
-	_userUsecase "Foundries/users/usecase/http"
+	_userHTTPDelivery "Foundries/controllers/http"
+	"Foundries/models"
+	_userRepo "Foundries/repositories/pg"
+	_userUsecase "Foundries/usecases/http"
 	"github.com/gin-gonic/gin"
 	"log"
 

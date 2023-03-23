@@ -1,9 +1,9 @@
 package http
 
 import (
-	"Foundries/users/models"
-	"Foundries/users/usecase"
-	"Foundries/users/utils"
+	"Foundries/models"
+	"Foundries/usecases"
+	"Foundries/utils"
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
@@ -17,11 +17,11 @@ type ResponseError struct {
 
 // UserHandler will represent the http handler for user
 type UserHandler struct {
-	UserUsecase usecase.UserUsecase
+	UserUsecase usecases.UserUsecase
 }
 
 // NewUserHandler will initialize the users/ resources endpoint
-func NewUserHandler(r *gin.Engine, us usecase.UserUsecase) {
+func NewUserHandler(r *gin.Engine, us usecases.UserUsecase) {
 	handler := &UserHandler{
 		UserUsecase: us,
 	}

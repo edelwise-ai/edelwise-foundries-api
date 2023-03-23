@@ -1,8 +1,8 @@
 package pg
 
 import (
-	"Foundries/users/models"
-	"Foundries/users/repository"
+	"Foundries/models"
+	"Foundries/repositories"
 	"database/sql"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ import (
 type TestSuite struct {
 	db       *gorm.DB
 	mock     sqlmock.Sqlmock
-	userRepo repository.UserRepository
+	userRepo repositories.UserRepository
 }
 
 func (s *TestSuite) SetupSuite(t *testing.T) {

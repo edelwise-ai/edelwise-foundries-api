@@ -1,8 +1,8 @@
 package pg
 
 import (
-	"Foundries/users/models"
-	"Foundries/users/repository"
+	"Foundries/models"
+	"Foundries/repositories"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +11,7 @@ type UserRepository struct {
 }
 
 // NewUserRepository will create an object that represent the interface
-func NewUserRepository(Conn *gorm.DB) repository.UserRepository {
+func NewUserRepository(Conn *gorm.DB) repositories.UserRepository {
 	return &UserRepository{Conn}
 }
 

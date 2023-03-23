@@ -1,8 +1,10 @@
-package repository
+package usecases
 
-import "Foundries/users/models"
+import (
+	"Foundries/models"
+)
 
-type UserRepository interface {
+type UserUsecase interface {
 	Fetch() ([]models.User, error)
 	GetByID(id string) (models.User, error)
 	GetByEmail(email string) (models.User, error)

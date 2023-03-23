@@ -1,17 +1,17 @@
 package http
 
 import (
-	"Foundries/users/models"
-	"Foundries/users/repository"
-	"Foundries/users/usecase"
+	"Foundries/models"
+	"Foundries/repositories"
+	"Foundries/usecases"
 )
 
 type UserUsecase struct {
-	userRepo repository.UserRepository
+	userRepo repositories.UserRepository
 }
 
 // NewUserUsecase will create new an userUsecase object representation of models.UserUsecase interface
-func NewUserUsecase(userRepo repository.UserRepository) usecase.UserUsecase {
+func NewUserUsecase(userRepo repositories.UserRepository) usecases.UserUsecase {
 	return &UserUsecase{userRepo}
 }
 
